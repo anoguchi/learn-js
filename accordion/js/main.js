@@ -1,11 +1,9 @@
-const accordions = Array.from(document.querySelectorAll(".accordion"));
+const accordionContainer = document.querySelector(".accordion-container");
 
-accordions.forEach((accordion) => {
-  // Find the accordion header
-  const accordionHeader = accordion.querySelector(".accordion__header");
-
-  // Add event listener to the accordion header
-  accordionHeader.addEventListener("click", (event) => {
+accordionContainer.addEventListener("click", (event) => {
+  const accordionHeader = event.target.closest(".accordion__header");
+  if (accordionHeader) {
+    const accordion = accordionHeader.parentElement;
     accordion.classList.toggle("is-open");
-  });
+  }
 });
