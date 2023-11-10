@@ -61,8 +61,9 @@ previousButton.addEventListener("click", (event) => {
  * Dots
  */
 
-dots.forEach((dot) => {
-  dot.addEventListener("click", (event) => {
+dotsContainer.addEventListener("click", (event) => {
+  const dot = event.target.closest("button");
+  if (dot) {
     let clickedDotIndex;
 
     for (let index = 0; index < dots.length; index++) {
@@ -94,5 +95,5 @@ dots.forEach((dot) => {
       previousButton.removeAttribute("hidden");
       nextButton.removeAttribute("hidden");
     }
-  });
+  }
 });
