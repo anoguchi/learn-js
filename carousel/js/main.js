@@ -22,7 +22,7 @@ nextButton.addEventListener("click", (event) => {
   const nextSlide = currentSlide.nextElementSibling;
   const destination = getComputedStyle(nextSlide).left;
 
-  contents.style.left = "-" + destination;
+  contents.style.transform = "translateX(-" + destination + ")";
   currentSlide.classList.remove("is-selected");
   nextSlide.classList.add("is-selected");
   previousButton.removeAttribute("hidden");
@@ -42,7 +42,7 @@ previousButton.addEventListener("click", (event) => {
   const previousSlide = currentSlide.previousElementSibling;
   const destination = getComputedStyle(previousSlide).left;
 
-  contents.style.left = "-" + destination;
+  contents.style.transform = "translateX(-" + destination + ")";
   currentSlide.classList.remove("is-selected");
   previousSlide.classList.add("is-selected");
   nextButton.removeAttribute("hidden");
