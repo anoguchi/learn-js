@@ -7,54 +7,70 @@ const dots = [...carousel.querySelectorAll(".carousel__dot")];
 const dotsContainer = carousel.querySelector(".carousel__dots");
 const slideWidth = slides[0].getBoundingClientRect().width;
 
-slides.forEach((slide, index) => {
-  slide.style.left = slideWidth * index + "px";
-});
+function setSlidePositions() {
+  slides.forEach((slide, index) => {
+    slide.style.left = slideWidth * index + "px";
+  });
+}
+
+function switchSlide(currentSlideIndex, targetSlideIndex) {
+  const currentSlide = slides[currentSlideIndex];
+  const targetSlide = slides[targetSlideIndex];
+  const destination = getComputedStyle(targetSlide).left;
+
+  contents.style.transform = `translateX(-${destination})`;
+  currentSlide.classList.remove("is-selected");
+  targetSlide.classList.add("is-selected");
+}
+
+function highlightDot(currentSlideIndex, targetSlideIndex) {
+  const currentDot = dots[currentSlideIndex];
+  const targetDot = dots[targetSlideIndex];
+  currentDot.classList.remove("is-selected");
+  targetDot.classList.add("is-selected");
+}
+
+function showHideArrowButtons(targetSlideIndex) {
+  // Show / hide buttons
+  if (targetSlideIndex === 0) {
+    previousButton.setAttribute("hidden", true);
+    nextButton.removeAttribute("hidden");
+  } else if (targetSlideIndex === dots.length - 1) {
+    previousButton.removeAttribute("hidden");
+    nextButton.setAttribute("hidden", true);
+  } else {
+    previousButton.removeAttribute("hidden");
+    nextButton.removeAttribute("hidden");
+  }
+}
+
+function getCurrentSlideIndex() {
+  const currentSlide = contents.querySelector(".is-selected");
+  return slides.findIndex((slide) => slide === currentSlide);
+}
+
+setSlidePositions();
 
 /**
  * Buttons
  */
 
 nextButton.addEventListener("click", (event) => {
-  // Get the selected slide
-  const currentSlide = contents.querySelector(".is-selected");
-  // Get the next slide
-  const nextSlide = currentSlide.nextElementSibling;
-  const destination = getComputedStyle(nextSlide).left;
+  const currentSlideIndex = getCurrentSlideIndex();
+  const nextSlideIndex = currentSlideIndex + 1;
 
-  contents.style.transform = `translateX(-${destination})`;
-  currentSlide.classList.remove("is-selected");
-  nextSlide.classList.add("is-selected");
-  previousButton.removeAttribute("hidden");
-  if (!nextSlide.nextElementSibling) {
-    nextButton.setAttribute("hidden", true);
-  }
-
-  // Highlight dot
-  const currentDot = dotsContainer.querySelector(".is-selected");
-  const nextDot = currentDot.nextElementSibling;
-  currentDot.classList.remove("is-selected");
-  nextDot.classList.add("is-selected");
+  switchSlide(currentSlideIndex, nextSlideIndex);
+  highlightDot(currentSlideIndex, nextSlideIndex);
+  showHideArrowButtons(nextSlideIndex);
 });
 
 previousButton.addEventListener("click", (event) => {
-  const currentSlide = contents.querySelector(".is-selected");
-  const previousSlide = currentSlide.previousElementSibling;
-  const destination = getComputedStyle(previousSlide).left;
+  const currentSlideIndex = getCurrentSlideIndex();
+  const previousSlideIndex = currentSlideIndex - 1;
 
-  contents.style.transform = `translateX(-${destination})`;
-  currentSlide.classList.remove("is-selected");
-  previousSlide.classList.add("is-selected");
-  nextButton.removeAttribute("hidden");
-  if (!previousSlide.previousElementSibling) {
-    previousButton.setAttribute("hidden", true);
-  }
-
-  // Highlight dot
-  const currentDot = dotsContainer.querySelector(".is-selected");
-  const previousDot = currentDot.previousElementSibling;
-  currentDot.classList.remove("is-selected");
-  previousDot.classList.add("is-selected");
+  switchSlide(currentSlideIndex, previousSlideIndex);
+  highlightDot(currentSlideIndex, previousSlideIndex);
+  showHideArrowButtons(previousSlideIndex);
 });
 
 /**
@@ -65,29 +81,10 @@ dotsContainer.addEventListener("click", (event) => {
   const dot = event.target.closest("button");
   if (!dot) return;
 
-  const clickedDotIndex = dots.findIndex((d) => d === dot);
+  const currentSlideIndex = getCurrentSlideIndex();
+  const targetSlideIndex = dots.findIndex((d) => d === dot);
 
-  const slideToShow = slides[clickedDotIndex];
-  const destination = getComputedStyle(slideToShow).left;
-  contents.style.transform = `translateX(-${destination})`;
-  slides.forEach((slide) => {
-    slide.classList.remove("is-selected");
-  });
-  slideToShow.classList.add("is-selected");
-  dots.forEach((d) => {
-    d.classList.remove("is-selected");
-  });
-  dot.classList.add("is-selected");
-
-  // Show / hide buttons
-  if (clickedDotIndex === 0) {
-    previousButton.setAttribute("hidden", true);
-    nextButton.removeAttribute("hidden");
-  } else if (clickedDotIndex === dots.length - 1) {
-    previousButton.removeAttribute("hidden");
-    nextButton.setAttribute("hidden", true);
-  } else {
-    previousButton.removeAttribute("hidden");
-    nextButton.removeAttribute("hidden");
-  }
+  switchSlide(currentSlideIndex, targetSlideIndex);
+  highlightDot(currentSlideIndex, targetSlideIndex);
+  showHideArrowButtons(targetSlideIndex);
 });
